@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <title>Generated test object</title>
+</head>
+
+<body>
+    <div class="language-selector">
+        <select id="language-select">
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+        </select>
+    </div>
+
+    <!-- Auth Page -->
+    <div class="auth-page" id="auth-page">
+        <div class="container">
+            <div class="tabs">
+                <div class="tab active" id="login-tab" data-tab="login">Login</div>
+                <div class="tab" id="signup-tab" data-tab="signup">Sign Up</div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email" id="login-email-label">Email</label>
+                    <input type="email" id="login-email" required>
+                    <div class="error" id="login-email-error">Please enter a valid email address</div>
+                </div>
+                <div class="form-group">
+                    <label for="login-password" id="login-password-label">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn" id="login-btn">Log In</button>
+                <div class="spinner" id="login-spinner"></div>
+                <div class="error-message" id="login-error">Invalid email or password. Please try again.</div>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" style="display: none;">
+                <div class="form-group">
+                    <label for="signup-email" id="signup-email-label">Email</label>
+                    <input type="email" id="signup-email" required>
+                    <div class="error" id="signup-email-error">Please enter a valid email address</div>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password" id="signup-password-label">Password</label>
+                    <input type="password" id="signup-password" required>
+                    <div class="error" id="signup-password-error">Password must be at least 8 characters with at least
+                        one number and one uppercase letter</div>
+                </div>
+                <button type="submit" class="btn" id="signup-btn">Sign Up</button>
+                <div class="spinner" id="signup-spinner"></div>
+                <div class="error-message" id="signup-error">There was an error with your registration. Please try
+                    again.</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div class="profile-page" id="profile-page">
+        <div class="profile-header">
+            <h1 id="welcome-message">Welcome to your profile</h1>
+            <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+        <div class="profile-content">
+            <h2 id="profile-title">Your Profile</h2>
+            <p id="profile-description">This is your profile page. After successful authentication, you can view and manage your account here.</p>
+            <p id="user-email"></p>
+        </div>
+    </div>
+
+    <script>
+        // API endpoints
+        const API_ENDPOINTS = {
+            login: 'http://localhost/api/auth/login',
+            signup: 'http://localhost/api/auth/signup'
+        };
+
+        // Translations
+        const translations = {
+            en: {
+                login: "Log In",
+                signup: "Sign Up",
+                email: "Email",
+                password: "Password",
+                emailError: "Please enter a valid email address",
+                passwordError: "Password must be at least 8 characters with at least one number and one uppercase letter",
+                loginError: "Invalid email or password. Please try again.",
+                signupError: "There was an error with your registration. Please try again.",
+                welcome: "Welcome to your profile",
+                profileTitle: "Your Profile",
+                profileDescription: "This is your profile page. After successful authentication, you can view and manage your account here.",
+                logout: "Logout",
+                email: "Email"
+            },
+            de: {
+                login: "Anmelden",
+                signup: "Registrieren",
+                email: "E-Mail",
+                password: "Passwort",
+                emailError: "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+                passwordError: "Das Passwort muss mindestens 8 Zeichen lang sein und mindestens eine Zahl und einen Großbuchstaben enthalten",
+                loginError: "Ungültige E-Mail oder Passwort. Bitte versuchen Sie es erneut.",
+                signupError: "Bei Ihrer Registrierung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+                welcome: "Willkommen auf Ihrem Profil",
+                profileTitle: "Ihr Profil",
+                profileDescription: "Dies ist Ihre Profilseite. Nach erfolgreicher Authentifizierung können Sie hier Ihr Konto einsehen und verwalten.",
+                logout: "Abmelden",
+                email: "E-Mail"
+            }
+        };
+
+        // Get browser language
+        const getBrowserLanguage = () => {
+            const browserLang = navigator.language || navigator.userLanguage;
+
+            return browserLang.startsWith('de') ? 'de' : 'en';
+        };
+
+        // Set initial language based on browser
+        let currentLanguage = getBrowserLanguage();
+        document.getElementById('language-select').value = currentLanguage;
+
+        // Update UI language
+        const updateLanguage = (lang) => {
+            currentLanguage = lang;
+
+            // Update tab text
+            document.getElementById('login-tab').textContent = translations[lang].login;
+            document.getElementById('signup-tab').textContent = translations[lang].signup;
+
+            // Update login form
+            document.getElementById('login-email-label').textContent = translations[lang].email;
+            document.getElementById('login-password-label').textContent = translations[lang].password;
+            document.getElementById('login-email-error').textContent = translations[lang].emailError;
+            document.getElementById('login-btn').textContent = translations[lang].login;
+            document.getElementById('login-error').textContent = translations[lang].loginError;
+
+            // Update signup form
+            document.getElementById('signup-email-label').textContent = translations[lang].email;
+            document.getElementById('signup-password-label').textContent = translations[lang].password;
+            document.getElementById('signup-email-error').textContent = translations[lang].emailError;
+            document.getElementById('signup-password-error').textContent = translations[lang].passwordError;
+            document.getElementById('signup-btn').textContent = translations[lang].signup;
+            document.getElementById('signup-error').textContent = translations[lang].signupError;
+
+            // Update profile page
+            document.getElementById('welcome-message').textContent = translations[lang].welcome;
+            document.getElementById('profile-title').textContent = translations[lang].profileTitle;
+            document.getElementById('profile-description').textContent = translations[lang].profileDescription;
+            document.getElementById('logout-btn').textContent = translations[lang].logout;
+        };
+
+        // Apply initial language
+        updateLanguage(currentLanguage);
+
+        // Handle language change
+        document.getElementById('language-select').addEventListener('change', (e) => {
+            updateLanguage(e.target.value);
+        });
+
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        const forms = {
+            login: document.getElementById('login-form'),
+            signup: document.getElementById('signup-form')
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Show corresponding form
+                Object.keys(forms).forEach(key => {
+                    forms[key].style.display = key === tabId ? 'block' : 'none';
+                });
+
+                // Hide error messages
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+            });
+        });
+
+        // Email validation
+        const validateEmail = (email) => {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            return re.test(email);
+        };
+
+        // Password validation (for signup only)
+        const validatePassword = (password) => {
+            // At least 8 characters, 1 number, 1 uppercase letter
+            const re = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            
+            return re.test(password);
+        };
+
+        // Set up form validation
+        const setupFormValidation = (formId, emailId, passwordId, isSignup = false) => {
+            const form = document.getElementById(formId);
+            const emailInput = document.getElementById(emailId);
+            const passwordInput = document.getElementById(passwordId);
+            const spinner = document.getElementById(`${isSignup ? 'signup' : 'login'}-spinner`);
+            const submitButton = document.getElementById(`${isSignup ? 'signup' : 'login'}-btn`);
+
+            emailInput.addEventListener('input', () => {
+                const isValid = validateEmail(emailInput.value);
+                emailInput.classList.toggle('invalid', !isValid);
+            });
+
+            if (isSignup) {
+                passwordInput.addEventListener('input', () => {
+                    const isValid = validatePassword(passwordInput.value);
+                    passwordInput.classList.toggle('invalid', !isValid);
+                });
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Validate inputs
+                const isEmailValid = validateEmail(emailInput.value);
+                let isPasswordValid = true;
+
+                if (isSignup) {
+                    isPasswordValid = validatePassword(passwordInput.value);
+                }
+
+                if (!isEmailValid) {
+                    emailInput.classList.add('invalid');
+            
+                    return;
+                }
+
+                if (isSignup && !isPasswordValid) {
+                    passwordInput.classList.add('invalid');
+            
+                    return;
+                }
+
+                // If all validations pass, submit form
+                if (isEmailValid && isPasswordValid) {
+                    // Show loading spinner and disable button
+                    spinner.style.display = 'block';
+                    submitButton.disabled = true;
+
+                    // Make API call
+                    authenticateUser(
+                        emailInput.value,
+                        passwordInput.value,
+                        isSignup ? 'signup' : 'login',
+                        () => {
+                            // Hide spinner and enable button on completion
+                            spinner.style.display = 'none';
+                            submitButton.disabled = false;
+                        }
+                    );
+                }
+            });
+        };
+
+        // Set up both forms
+        setupFormValidation('login-form', 'login-email', 'login-password');
+        setupFormValidation('signup-form', 'signup-email', 'signup-password', true);
+
+        // Authentication function (real API call)
+        const authenticateUser = (email, password, type, callback) => {
+            const errorElement = document.getElementById(`${type}-error`);
+
+            // Create request data
+            const data = {
+                email: email,
+                password: password
+            };
+
+            // Make API request
+            fetch(API_ENDPOINTS[type], {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        // Success - status 200
+                        return response.json().then(data => {
+                            // Store auth token from response (if available)
+                            if (data && data.token) {
+                                localStorage.setItem('authToken', data.token);
+                            }
+
+                            // Store auth state
+                            localStorage.setItem('isAuthenticated', 'true');
+                            localStorage.setItem('userEmail', email);
+
+                            // Redirect to profile page
+                            document.getElementById('auth-page').style.display = 'none';
+                            document.getElementById('profile-page').style.display = 'block';
+                            document.getElementById('user-email').textContent = `${translations[currentLanguage].email}: ${email}`;
+                        });
+                    } else if (response.status === 401) {
+                        // Unauthorized - status 401
+                        errorElement.style.display = 'block';
+            
+                        return Promise.reject('Authentication failed');
+                    } else {
+                        // Other error
+                        errorElement.style.display = 'block';
+            
+                        return Promise.reject('Server error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    errorElement.style.display = 'block';
+                })
+                .finally(() => {
+                    if (callback) callback();
+                });
+        };
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            // Clear auth state
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('authToken');
+
+            // Redirect to auth page
+            document.getElementById('profile-page').style.display = 'none';
+            document.getElementById('auth-page').style.display = 'flex';
+        });
+
+        // Check if user is already authenticated on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
+            if (isAuthenticated) {
+                const userEmail = localStorage.getItem('userEmail');
+                document.getElementById('auth-page').style.display = 'none';
+                document.getElementById('profile-page').style.display = 'block';
+                document.getElementById('user-email').textContent = `${translations[currentLanguage].email}: ${userEmail}`;
+            }
+        });
+    </script>
+</body>
+
+</html>
