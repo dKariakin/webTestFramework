@@ -1,18 +1,20 @@
-import { test, expect } from '@playwright/test';
+import { mockLoginSuccess } from '../src/mocks/auth';
+import { test } from './fixture';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test.describe('Login flow', () => {
+  test.beforeEach(async ({ auth }) => {
+    await auth.open();
+  });
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+  test('When user logs in with correct credentials, profile page should be opened', async ({ auth, profile }) => {
+    const randUser = {
+      email: 'test@email.com',
+      pwd: '123456',
+    };
+    await mockLoginSuccess(auth.getPage());
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+    await auth.login(randUser.email, randUser.pwd);
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+    await profile.shouldHavePageTitle('Welcome to your profile');
+  });
 });
