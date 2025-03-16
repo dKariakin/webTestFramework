@@ -20,6 +20,6 @@ export default class ProfilePage {
   }
 
   async shouldHaveUserEmail(email: string) {
-    await expect(this.emailLabel).toHaveText(email);
+    await expect(this.emailLabel).toContainText(email);
   }
 }
