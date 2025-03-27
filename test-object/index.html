@@ -17,7 +17,7 @@
     </div>
 
     <!-- Auth Page -->
-    <div class="auth-page" id="auth-page">
+    <div class="auth-page" id="auth-page" style="display: none;">
         <div class="container">
             <div class="tabs">
                 <div class="tab active" id="login-tab" data-tab="login">Login</div>
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Profile Page -->
-    <div class="profile-page" id="profile-page">
+    <div class="profile-page" id="profile-page" style="display: none;">
         <div class="profile-header">
             <h1 id="welcome-message">Welcome to your profile</h1>
             <button class="logout-btn" id="logout-btn">Logout</button>
@@ -80,6 +80,32 @@
             login: 'http://localhost/api/auth/login',
             signup: 'http://localhost/api/auth/signup'
         };
+
+        // Cookie functions
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
 
         // Translations
         const translations = {
@@ -298,12 +324,12 @@
                         return response.json().then(data => {
                             // Store auth token from response (if available)
                             if (data && data.token) {
-                                localStorage.setItem('authToken', data.token);
+                                setCookie('authToken', data.token, 7);
                             }
 
                             // Store auth state
-                            localStorage.setItem('isAuthenticated', 'true');
-                            localStorage.setItem('userEmail', email);
+                            setCookie('isAuthenticated', 'true', 7);
+                            setCookie('userEmail', email, 7);
 
                             // Redirect to profile page
                             document.getElementById('auth-page').style.display = 'none';
@@ -333,10 +359,10 @@
 
         // Logout functionality
         document.getElementById('logout-btn').addEventListener('click', () => {
-            // Clear auth state
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('userEmail');
-            localStorage.removeItem('authToken');
+            // Clear auth cookies
+            eraseCookie('isAuthenticated');
+            eraseCookie('userEmail');
+            eraseCookie('authToken');
 
             // Redirect to auth page
             document.getElementById('profile-page').style.display = 'none';
@@ -344,16 +370,31 @@
         });
 
         // Check if user is already authenticated on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-
+        function checkAuthentication() {
+            console.log("Checking authentication...");
+            console.log("All cookies:", document.cookie);
+            
+            const isAuthenticated = getCookie('isAuthenticated') === 'true';
+            console.log("isAuthenticated:", isAuthenticated);
+            
             if (isAuthenticated) {
-                const userEmail = localStorage.getItem('userEmail');
+                const userEmail = getCookie('userEmail');
+                console.log("userEmail:", userEmail);
+                
                 document.getElementById('auth-page').style.display = 'none';
                 document.getElementById('profile-page').style.display = 'block';
                 document.getElementById('user-email').textContent = `${translations[currentLanguage].email}: ${userEmail}`;
+            } else {
+                document.getElementById('auth-page').style.display = 'flex';
+                document.getElementById('profile-page').style.display = 'none';
             }
-        });
+        }
+
+        // Run the check immediately
+        checkAuthentication();
+        
+        // Also run on DOMContentLoaded to ensure elements are available
+        document.addEventListener('DOMContentLoaded', checkAuthentication);
     </script>
 </body>
 
