@@ -20,7 +20,7 @@ export default class AuthPage extends BasePage {
   private readonly signupErr: Locator;
 
   constructor(page: Page) {
-    super(page, '');
+    super(page);
 
     // Login tab
     this.loginEmailErr = page.locator(`//div[@id='login-email-error']`);

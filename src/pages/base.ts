@@ -1,12 +1,10 @@
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 export default abstract class BasePage {
   private readonly page: Page;
-  private readonly path: string;
 
-  constructor(page: Page, path: string) {
+  constructor(page: Page) {
     this.page = page;
-    this.path = path;
   }
 
   async open(): Promise<void> {
@@ -15,5 +13,13 @@ export default abstract class BasePage {
 
   getPage(): Page {
     return this.page;
+  }
+
+  async shouldNotHaveUserData() {
+    await this.page.evaluate(() => {
+      expect(window.sessionStorage.getItem('authToken')).toBeUndefined();
+      expect(window.sessionStorage.getItem('isAuthenticated')).toBeUndefined();
+      expect(window.sessionStorage.getItem('userEmail')).toBeUndefined();
+    });
   }
 }

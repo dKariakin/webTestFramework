@@ -1,3 +1,4 @@
+import { Locales } from '../src/commons/locales';
 import { mockLoginSuccess, mockSignupSuccess } from '../src/mocks/auth';
 import { test } from './fixture';
 
@@ -19,6 +20,22 @@ test.describe('Login flow', () => {
     await profile.shouldHavePageTitle('Welcome to your profile');
     await profile.shouldHaveUserEmail(expectedEmail);
   });
+
+  test('When user logs in with another language selected, profile page should be opened in this language',
+    async ({ auth, header, profile }) => {
+      const expectedEmail = 'test@email.com';
+      const randUser = {
+        email: expectedEmail,
+        pwd: '123456',
+      };
+      await mockLoginSuccess(auth.getPage());
+
+      await header.selectLanguage(Locales.DE);
+      await auth.login(randUser.email, randUser.pwd);
+
+      await profile.shouldHavePageTitle('Willkommen auf Ihrem Profil');
+      await profile.shouldHaveUserEmail(expectedEmail);
+    });
 });
 
 test.describe('Signup flow', () => {
@@ -42,6 +59,7 @@ test.describe('Signup flow', () => {
 
   [
     { title: 'empty password', pwd: '' },
+    { title: 'short password', pwd: '1qW4567' },
     { title: 'lowercase letters only', pwd: 'qweqweqwe' },
     { title: 'no lowercase letters', pwd: '1Q345678' },
     { title: 'letters only', pwd: 'qweQWEqwe' }
