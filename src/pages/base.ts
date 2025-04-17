@@ -8,7 +8,7 @@ export default abstract class BasePage {
   }
 
   async open(): Promise<void> {
-    await this.page.goto(``);
+    await this.page.goto(`/index.html`);
   }
 
   getPage(): Page {
