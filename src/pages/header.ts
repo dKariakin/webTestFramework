@@ -1,5 +1,5 @@
-import { Locator, Page } from "@playwright/test";
-import { Locales } from "../commons/locales";
+import { Locator, Page } from '@playwright/test';
+import { Locales } from '../commons/locales';
 
 export default class HeaderSection {
   private readonly langSelector: Locator;
