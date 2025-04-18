@@ -16,5 +16,5 @@ export const test = base.extend<{
   },
   header: async ({ page }, use) => {
     await use(new HeaderSection(page));
-  }
+  },
 });

@@ -1,5 +1,5 @@
-import { expect, Locator, Page } from "@playwright/test";
-import BasePage from "./base";
+import { expect, Locator, Page } from '@playwright/test';
+import BasePage from './base';
 
 export default class AuthPage extends BasePage {
   // Login tab

@@ -1,5 +1,5 @@
-import { Page, Route } from "@playwright/test";
-import { StatusCodes } from "http-status-codes";
+import { Page, Route } from '@playwright/test';
+import { StatusCodes } from 'http-status-codes';
 
 const loginApi = /(.*)\/api\/auth\/login/;
 const signupApi = /(.*)\/api\/auth\/signup/;
